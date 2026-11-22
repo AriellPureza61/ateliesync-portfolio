@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AteliêSync — Demo Interativa Online | B Tech Solutions</title>
+  <link rel="icon" type="image/png" href="./assets/logo.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background: #111214; color: #F4F1EC; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    .tabular-nums { font-variant-numeric: tabular-nums; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+  <!-- Demo Notice Banner -->
+  <div class="bg-[#1B1711] border-b border-[#D6B88D]/30 px-4 py-2 text-xs text-[#E8D7BC] flex flex-wrap items-center justify-between gap-2">
+    <div>
+      <strong class="text-[#D6B88D]">MODO DEMONSTRAÇÃO ONLINE:</strong>
+      <span>Ambiente interativo com dados 100% fictícios e ilustrativos (<strong>Studio Lumière Estética</strong>) — sem vínculo com produção.</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <a href="./AtelieSync_Portfolio_Ilustrativo.pdf" target="_blank" class="underline text-[#D6B88D] hover:text-white">PDF One-Pager</a>
+      <a href="https://github.com/AriellPureza61/ateliesync-portfolio" target="_blank" class="px-2.5 py-1 rounded bg-[#D6B88D] text-[#111214] font-semibold hover:bg-[#E3C9A3]">GitHub Portfólio</a>
+    </div>
+  </div>
+
+  <div class="flex-1 flex flex-col lg:flex-row">
+    <!-- Sidebar -->
+    <aside class="w-full lg:w-64 bg-[#0D0E10] border-b lg:border-b-0 lg:border-r border-[#282C34] p-4 flex flex-col justify-between gap-4">
+      <div class="space-y-4">
+        <div class="flex items-center gap-3">
+          <img src="./assets/logo.png" alt="AteliêSync" class="w-9 h-9 rounded-lg border border-[#282C34]" />
+          <div>
+            <div class="font-bold text-base text-[#F4F1EC] leading-tight">AteliêSync</div>
+            <div class="text-[11px] text-[#D6B88D]">Demo Interativa · B Tech</div>
+          </div>
+        </div>
+
+        <div class="p-2.5 rounded-lg bg-[#181A1E] border border-[#282C34]">
+          <div class="text-[10px] uppercase tracking-wider text-[#989BA3]">Estúdio Demonstrativo</div>
+          <div class="text-sm font-medium text-[#F4F1EC] mt-0.5">Studio Lumière Estética</div>
+          <div class="text-[11px] font-mono text-[#6E727C] mt-0.5">Assistente IA: Sofia</div>
+        </div>
+
+        <nav class="grid grid-cols-2 lg:grid-cols-1 gap-1.5" id="nav-tabs">
+          <button data-tab="chat" class="tab-btn text-left px-3 py-2.5 rounded-lg text-xs font-medium border transition-colors cursor-pointer bg-[#181A1E] border-[#D6B88D] text-[#F4F1EC]">Simulador de Chat IA</button>
+          <button data-tab="agenda" class="tab-btn text-left px-3 py-2.5 rounded-lg text-xs font-medium border transition-colors cursor-pointer border-transparent text-[#989BA3] hover:bg-[#181A1E]">Agenda (<span id="badge-agenda">3</span>)</button>
+          <button data-tab="caixa" class="tab-btn text-left px-3 py-2.5 rounded-lg text-xs font-medium border transition-colors cursor-pointer border-transparent text-[#989BA3] hover:bg-[#181A1E]">Caixa &amp; Resumo</button>
+          <button data-tab="config" class="tab-btn text-left px-3 py-2.5 rounded-lg text-xs font-medium border transition-colors cursor-pointer border-transparent text-[#989BA3] hover:bg-[#181A1E]">Regras IA, Almoço &amp; Feriados</button>
+        </nav>
+      </div>
+
+      <div class="hidden lg:block text-[11px] text-[#6E727C] pt-3 border-t border-[#282C34]">
+        Teste enviar mensagens no Simulador, concluir atendimentos na Agenda e criar regras na aba Config.
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-4 sm:p-6 max-w-5xl w-full mx-auto">
+      <!-- TAB CHAT -->
+      <section id="tab-chat" class="tab-panel space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+          <div>
+            <h1 class="text-xl font-semibold text-[#F4F1EC]">Simulador de Chat WhatsApp (IA)</h1>
+            <p class="text-xs sm:text-sm text-[#989BA3] mt-1">Converse com a Sofia respeitando equipe multi-profissional, horário de almoço, feriados, foto de referência e transbordo.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="btn-reset-chat" class="h-9 px-3 rounded-lg bg-[#181A1E] border border-[#282C34] text-xs font-medium text-[#989BA3] hover:text-[#F4F1EC] cursor-pointer">Reiniciar Conversa</button>
+          </div>
+        </div>
+
+        <div id="handoff-banner" class="hidden bg-[#181A1E] border border-amber-500/40 rounded-xl px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="text-xs sm:text-sm text-amber-300">
+            <strong>Transbordo Humano Ativado:</strong> IA pausada para este contato + alerta enviado ao WhatsApp da gestora.
+          </div>
+          <button id="btn-resume-ai" class="h-8 px-3 rounded-lg bg-[#D6B88D] text-[#111214] text-xs font-semibold hover:bg-[#E3C9A3] cursor-pointer whitespace-nowrap">Retomar IA</button>
+        </div>
+
+        <!-- Quick test pills -->
+        <div class="flex flex-wrap gap-2">
+          <button class="quick-msg px-2.5 py-1.5 rounded-lg bg-[#181A1E] border border-[#282C34] text-xs text-[#D6B88D] hover:border-[#D6B88D] cursor-pointer" data-msg="Quais serviços e valores vocês têm?">Ver tabela de preços</button>
+          <button class="quick-msg px-2.5 py-1.5 rounded-lg bg-[#181A1E] border border-[#282C34] text-xs text-[#D6B88D] hover:border-[#D6B88D] cursor-pointer" data-msg="Quero agendar para amanhã às 12:00">Testar horário de almoço (12:00)</button>
+          <button class="quick-msg px-2.5 py-1.5 rounded-lg bg-[#181A1E] border border-[#282C34] text-xs text-[#D6B88D] hover:border-[#D6B88D] cursor-pointer" data-msg="Quero agendar com a Camila Andrade Extensão de Cílios dia 24/11 às 10:00">Agendar com Camila (24/11 10:00)</button>
+          <button class="quick-msg px-2.5 py-1.5 rounded-lg bg-[#181A1E] border border-[#282C34] text-xs text-amber-300 hover:border-amber-400 cursor-pointer" data-msg="Quero falar com uma atendente humana">Testar transbordo humano</button>
+        </div>
+
+        <div class="bg-[#181A1E] border border-[#282C34] rounded-xl flex flex-col h-[460px]">
+          <div class="px-4 py-3 border-b border-[#282C34] flex items-center justify-between">
+            <div>
+              <div class="text-sm font-medium">Sofia · Studio Lumière Estética</div>
+              <div id="ai-status-label" class="text-xs text-emerald-400 font-medium">IA Ativa</div>
+            </div>
+            <span class="text-[11px] text-[#6E727C]">Simulação Local</span>
+          </div>
+
+          <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3 text-sm"></div>
+
+          <form id="chat-form" class="p-3 border-t border-[#282C34] flex gap-2">
+            <input id="chat-input" type="text" placeholder="Digite como a cliente no WhatsApp..." class="flex-1 h-10 px-3 rounded-lg bg-[#111214] border border-[#282C34] text-sm text-[#F4F1EC] focus:outline-none focus:border-[#D6B88D]" />
+            <button type="submit" class="h-10 px-4 rounded-lg bg-[#D6B88D] text-[#111214] text-xs font-semibold hover:bg-[#E3C9A3] cursor-pointer">Enviar</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- TAB AGENDA -->
+      <section id="tab-agenda" class="tab-panel hidden space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h1 class="text-xl font-semibold text-[#F4F1EC]">Agenda por Profissional</h1>
+            <p class="text-xs sm:text-sm text-[#989BA3] mt-1">Clique em <strong>Concluir</strong> para lançar o pagamento automaticamente no Caixa.</p>
+          </div>
+          <select id="agenda-prof-filter" class="h-9 px-3 rounded-lg bg-[#181A1E] border border-[#282C34] text-xs text-[#F4F1EC]">
+            <option value="all">Todos os profissionais</option>
+            <option value="Camila Andrade">Camila Andrade</option>
+            <option value="Juliana Martins">Juliana Martins</option>
+          </select>
+        </div>
+
+        <div class="bg-[#181A1E] border border-[#282C34] rounded-xl overflow-x-auto">
+          <table class="w-full text-xs sm:text-sm text-left">
+            <thead>
+              <tr class="border-b border-[#282C34] text-xs text-[#989BA3]">
+                <th class="py-3 px-4">Data / Hora</th>
+                <th class="py-3 px-4">Cliente</th>
+                <th class="py-3 px-4">Procedimento &amp; Profissional</th>
+                <th class="py-3 px-4">Valor</th>
+                <th class="py-3 px-4">Status</th>
+                <th class="py-3 px-4 text-right">Ação</th>
+              </tr>
+            </thead>
+            <tbody id="agenda-tbody" class="divide-y divide-[#282C34]"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB CAIXA -->
+      <section id="tab-caixa" class="tab-panel hidden space-y-4">
+        <div>
+          <h1 class="text-xl font-semibold text-[#F4F1EC]">Caixa &amp; Resumo Financeiro</h1>
+          <p class="text-xs sm:text-sm text-[#989BA3] mt-1">Indicadores calculados em tempo real a partir dos atendimentos concluídos e lançamentos.</p>
+        </div>
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <div class="bg-[#181A1E] border border-[#282C34] rounded-xl p-4">
+            <div class="text-xs text-[#989BA3]">Atendimentos IA</div>
+            <div id="kpi-ai" class="text-2xl font-semibold font-mono mt-1 tabular-nums">28</div>
+          </div>
+          <div class="bg-[#181A1E] border border-[#282C34] rounded-xl p-4">
+            <div class="text-xs text-[#989BA3]">Agendamentos</div>
+            <div id="kpi-appts" class="text-2xl font-semibold font-mono mt-1 tabular-nums">3</div>
+          </div>
+          <div class="bg-[#181A1E] border border-[#282C34] rounded-xl p-4">
+            <div class="text-xs text-[#989BA3]">Entradas Totais</div>
+            <div id="kpi-in" class="text-2xl font-semibold font-mono text-emerald-400 mt-1 tabular-nums">R$ 500,00</div>
+          </div>
+          <div class="bg-[#181A1E] border border-[#282C34] rounded-xl p-4">
+            <div class="text-xs text-[#989BA3]">Saldo Líquido</div>
+            <div id="kpi-net" class="text-2xl font-semibold font-mono text-[#D6B88D] mt-1 tabular-nums">R$ 435,00</div>
+          </div>
+        </div>
+
+        <div class="bg-[#181A1E] border border-[#282C34] rounded-xl p-4 space-y-4">
+          <form id="cash-form" class="grid grid-cols-1 sm:grid-cols-12 gap-2">
+            <select id="cash-type" class="sm:col-span-2 h-9 px-2 rounded-lg bg-[#111214] border border-[#282C34] text-xs">
+              <option value="entrada">Entrada</option>
+              <option value="saida" selected>Saída</option>
+            </select>
+            <input id="cash-desc" type="text" required placeholder="Descrição (ex.: Compra de insumos)" class="sm:col-span-5 h-9 px-3 rounded-lg bg-[#111214] border border-[#282C34] text-xs" />
+            <select id="cash-method" class="sm:col-span-2 h-9 px-2 rounded-lg bg-[#111214] border border-[#282C34] text-xs">
+              <option>Pix</option><option>Cartão</option><option>Dinheiro</option>
+            </select>
+            <input id="cash-amount" type="number" min="1" step="0.01" required placeholder="Valor (R$)" class="sm:col-span-2 h-9 px-3 rounded-lg bg-[#111214] border border-[#282C34] text-xs font-mono" />
+            <button type="submit" class="sm:col-span-1 h-9 px-3 rounded-lg bg-[#D6B88D] text-[#111214] text-xs font-semibold cursor-pointer">Lançar</button>
+          </form>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs sm:text-sm text-left">
+              <thead>
+                <tr class="border-b border-[#282C34] text-xs text-[#989BA3]">
+                  <th class="py-2.5 px-3">Data</th>
+                  <th class="py-2.5 px-3">Descrição</th>
+                  <th class="py-2.5 px-3">Forma</th>
+                  <th class="py-2.5 px-3 text-right">Valor</th>
+                </tr>
+              </thead>
+              <tbody id="cash-tbody" class="divide-y divide-[#282C34]"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB CONFIG -->
+      <section id="tab-config" class="tab-panel hidden space-y-4">
+        <div>
+          <h1 class="text-xl font-semibold text-[#F4F1EC]">Regras da IA, Almoço &amp; Feriados</h1>
+          <p class="text-xs sm:text-sm text-[#989BA3] mt-1">Tudo que você configurar aqui passa a valer imediatamente no Simulador de Chat desta demo.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-[#181A1E] border border-[#282C34] rounded-xl p-4 space-y-3">
+            <div class="text-sm font-semibold">Intervalo de Almoço &amp; Foto de Referência</div>
+            <label class="flex items-center gap-2 text-xs cursor-pointer">
+              <input id="cfg-lunch-enabled" type="checkbox" checked class="accent-[#D6B88D]" />
+              <span>Bloquear agendamentos no almoço (12:00 às 13:00)</span>
+            </label>
+            <label class="flex items-center gap-2 text-xs cursor-pointer">
+              <input id="cfg-photo-enabled" type="checkbox" checked class="accent-[#D6B88D]" />
+              <span>Perguntar se cliente deseja enviar foto de referência</span>
+            </label>
+          </div>
+
+          <div class="bg-[#181A1E] border border-[#282C34] rounded-xl p-4 space-y-3">
+            <div class="text-sm font-semibold">Feriados / Datas Bloqueadas</div>
+            <div id="holiday-list" class="flex flex-wrap gap-2"></div>
+            <form id="holiday-form" class="flex gap-2">
+              <input id="hol-date" type="date" required class="h-9 px-2 rounded-lg bg-[#111214] border border-[#282C34] text-xs font-mono" />
+              <input id="hol-label" type="text" placeholder="Ex.: Natal" class="flex-1 h-9 px-3 rounded-lg bg-[#111214] border border-[#282C34] text-xs" />
+              <button type="submit" class="h-9 px-3 rounded-lg bg-[#202329] border border-[#282C34] text-xs text-[#D6B88D] cursor-pointer">Bloquear</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="bg-[#181A1E] border border-[#282C34] rounded-xl p-4 space-y-3">
+          <div class="text-sm font-semibold">Regras Personalizadas da Assistente IA</div>
+          <ul id="rules-list" class="space-y-2"></ul>
+          <form id="rule-form" class="flex flex-col sm:flex-row gap-2">
+            <input id="rule-input" type="text" required placeholder="Ex.: Cobrar sinal de 30% no Pix para confirmar." class="flex-1 h-9 px-3 rounded-lg bg-[#111214] border border-[#282C34] text-xs" />
+            <button type="submit" class="h-9 px-4 rounded-lg bg-[#D6B88D] text-[#111214] text-xs font-semibold cursor-pointer">Adicionar Regra</button>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const state = {
+      aiCount: 28,
+      paused: false,
+      lunchEnabled: true,
+      askPhoto: true,
+      holidays: [{ id: 'h1', date: '2026-12-25', label: 'Natal' }],
+      rules: [{ id: 'r1', text: 'Sempre informar tolerância máxima de 15 minutos de atraso.' }],
+      messages: [
+        { role: 'client', text: 'Oi! Quero agendar um horário para amanhã de manhã.', time: '10:12' },
+        { role: 'assistant', text: 'Olá! Será um prazer te atender no Studio Lumière Estética. Com qual profissional você prefere atendimento: Camila Andrade ou Juliana Martins?', time: '10:12' },
+        { role: 'client', text: 'Com a Camila Andrade, quero Extensão de Cílios às 10:00.', time: '10:13' },
+        { role: 'assistant', text: 'Agendamento confirmado! Extensão de Cílios Volume Brasileiro (R$ 190,00) com Camila Andrade para 23/11 às 10:00. Gostaria de enviar alguma foto de referência?', time: '10:13' },
+      ],
+      appointments: [
+        { id: 'a1', date: '23/11/2026', time: '10:00', client: 'Beatriz Souza', proc: 'Extensão de Cílios Volume Brasileiro', prof: 'Camila Andrade', price: 190, status: 'Confirmado' },
+        { id: 'a2', date: '23/11/2026', time: '14:00', client: 'Fernanda Oliveira', proc: 'Alongamento de Unhas em Gel', prof: 'Juliana Martins', price: 160, status: 'Concluído' },
+        { id: 'a3', date: '23/11/2026', time: '16:30', client: 'Larissa Mendes', proc: 'Limpeza de Pele Profunda', prof: 'Juliana Martins', price: 150, status: 'Confirmado' },
+      ],
+      cash: [
+        { date: '22/11/2026', desc: 'Extensão de Cílios — Mariana Costa', method: 'Pix', type: 'entrada', amount: 190 },
+        { date: '22/11/2026', desc: 'Alongamento de Unhas em Gel — Fernanda Oliveira', method: 'Cartão', type: 'entrada', amount: 160 },
+        { date: '22/11/2026', desc: 'Limpeza de Pele Profunda — Patrícia Lima', method: 'Pix', type: 'entrada', amount: 150 },
+        { date: '22/11/2026', desc: 'Reposição de insumos e descartáveis', method: 'Pix', type: 'saida', amount: 65 },
+      ],
+    };
+
+    const brl = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+    // Tabs
+    document.querySelectorAll('.tab-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.tab;
+        document.querySelectorAll('.tab-btn').forEach((b) => {
+          const active = b.dataset.tab === target;
+          b.className = `tab-btn text-left px-3 py-2.5 rounded-lg text-xs font-medium border transition-colors cursor-pointer ${active ? 'bg-[#181A1E] border-[#D6B88D] text-[#F4F1EC]' : 'border-transparent text-[#989BA3] hover:bg-[#181A1E]'}`;
+        });
+        document.querySelectorAll('.tab-panel').forEach((p) => p.classList.toggle('hidden', p.id !== `tab-${target}`));
+      });
+    });
+
+    function renderChat() {
+      const box = document.getElementById('chat-messages');
+      box.innerHTML = state.messages.map((m) => `
+        <div class="flex ${m.role === 'client' ? 'justify-end' : 'justify-start'}">
+          <div class="max-w-[82%] px-3.5 py-2.5 rounded-xl border text-xs sm:text-sm ${m.role === 'client' ? 'bg-[#211E19] border-[#D6B88D]/40 text-[#F4F1EC]' : 'bg-[#202329] border-[#282C34] text-[#F4F1EC]'}">
+            <div>${m.text}</div>
+            <div class="text-[10px] text-[#989BA3] mt-1 text-right">${m.role === 'client' ? 'Cliente' : 'Sofia'} · ${m.time}</div>
+          </div>
+        </div>
+      `).join('');
+      box.scrollTop = box.scrollHeight;
+      document.getElementById('handoff-banner').classList.toggle('hidden', !state.paused);
+      const lbl = document.getElementById('ai-status-label');
+      lbl.textContent = state.paused ? 'Aguardando Humano' : 'IA Ativa';
+      lbl.className = `text-xs font-medium ${state.paused ? 'text-amber-400' : 'text-emerald-400'}`;
+    }
+
+    function renderAgenda() {
+      const profFilter = document.getElementById('agenda-prof-filter').value;
+      const rows = state.appointments.filter((a) => profFilter === 'all' || a.prof === profFilter);
+      document.getElementById('badge-agenda').textContent = state.appointments.length;
+      document.getElementById('kpi-appts').textContent = state.appointments.length;
+      document.getElementById('agenda-tbody').innerHTML = rows.map((a) => `
+        <tr>
+          <td class="py-3 px-4 font-mono">${a.date} · ${a.time}</td>
+          <td class="py-3 px-4">${a.client}</td>
+          <td class="py-3 px-4"><div>${a.proc}</div><div class="text-[11px] text-[#989BA3]">${a.prof}</div></td>
+          <td class="py-3 px-4 font-mono">${brl(a.price)}</td>
+          <td class="py-3 px-4"><span class="${a.status === 'Concluído' ? 'text-emerald-400' : 'text-[#D6B88D]'} font-medium">${a.status}</span></td>
+          <td class="py-3 px-4 text-right">
+            ${a.status !== 'Concluído' ? `<button onclick="completeAppt('${a.id}')" class="px-2.5 py-1 rounded bg-[#D6B88D] text-[#111214] text-xs font-semibold cursor-pointer">Concluir</button>` : '<span class="text-[#6E727C] text-xs">Pago</span>'}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    window.completeAppt = (id) => {
+      const appt = state.appointments.find((a) => a.id === id);
+      if (!appt || appt.status === 'Concluído') return;
+      appt.status = 'Concluído';
+      state.cash.unshift({ date: appt.date, desc: `${appt.proc} — ${appt.client}`, method: 'Pix', type: 'entrada', amount: appt.price });
+      renderAgenda();
+      renderCaixa();
+    };
+
+    function renderCaixa() {
+      const totalIn = state.cash.filter((c) => c.type === 'entrada').reduce((s, c) => s + c.amount, 0);
+      const totalOut = state.cash.filter((c) => c.type === 'saida').reduce((s, c) => s + c.amount, 0);
+      document.getElementById('kpi-ai').textContent = state.aiCount;
+      document.getElementById('kpi-in').textContent = brl(totalIn);
+      document.getElementById('kpi-net').textContent = brl(totalIn - totalOut);
+      document.getElementById('cash-tbody').innerHTML = state.cash.map((c) => `
+        <tr>
+          <td class="py-2.5 px-3 font-mono text-[#989BA3]">${c.date}</td>
+          <td class="py-2.5 px-3">${c.desc}</td>
+          <td class="py-2.5 px-3">${c.method}</td>
+          <td class="py-2.5 px-3 text-right font-mono ${c.type === 'entrada' ? 'text-emerald-400' : 'text-red-400'}">${c.type === 'entrada' ? '+' : '-'} ${brl(c.amount)}</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderConfig() {
+      document.getElementById('holiday-list').innerHTML = state.holidays.map((h) => `
+        <span class="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-[#111214] border border-[#282C34] text-xs">
+          <span class="font-mono text-[#D6B88D]">${h.date.split('-').reverse().join('/')}</span> ${h.label}
+          <button onclick="removeHoliday('${h.id}')" class="text-[#989BA3] hover:text-red-400 cursor-pointer">×</button>
+        </span>
+      `).join('');
+      document.getElementById('rules-list').innerHTML = state.rules.map((r) => `
+        <li class="flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-[#111214] border border-[#282C34] text-xs">
+          <span>${r.text}</span>
+          <button onclick="removeRule('${r.id}')" class="text-[#989BA3] hover:text-red-400 cursor-pointer">Excluir</button>
+        </li>
+      `).join('');
+    }
+
+    window.removeHoliday = (id) => { state.holidays = state.holidays.filter((h) => h.id !== id); renderConfig(); };
+    window.removeRule = (id) => { state.rules = state.rules.filter((r) => r.id !== id); renderConfig(); };
+
+    function simulateAiReply(userText) {
+      const lower = userText.toLowerCase();
+      state.aiCount += 1;
+      const ruleNote = state.rules.length ? ` (Obs.: ${state.rules[0].text})` : '';
+      const photoNote = state.askPhoto ? ' Gostaria de enviar uma foto de referência?' : '';
+
+      if (/atendente|humano|reclama|alergia/.test(lower)) {
+        state.paused = true;
+        return 'Encaminhei sua conversa para nossa equipe humana e avisei a gestora no WhatsApp. Em instantes alguém continua seu atendimento por aqui!';
+      }
+      if (state.lunchEnabled && /12:00|12h|meio[- ]dia/.test(lower)) {
+        return 'O horário das 12:00 coincide com nosso intervalo de almoço (12:00 às 13:00). Temos horários livres às 10:00 ou às 14:00. Qual profissional prefere: Camila Andrade ou Juliana Martins?';
+      }
+      const matchedHol = state.holidays.find((h) => lower.includes(h.date.split('-').reverse().slice(0, 2).join('/')) || lower.includes(h.label.toLowerCase()));
+      if (matchedHol) {
+        return `No dia ${matchedHol.date.split('-').reverse().join('/')} (${matchedHol.label}) o estúdio estará fechado. Podemos agendar para o próximo dia útil!`;
+      }
+      if (/preço|valor|serviço|tabela|procedimento/.test(lower)) {
+        return `Nossos principais serviços: Extensão de Cílios (R$ 190,00), Alongamento de Unhas em Gel (R$ 160,00) e Limpeza de Pele (R$ 150,00).${ruleNote} Com qual profissional deseja atendimento: Camila Andrade ou Juliana Martins?`;
+      }
+      if (/camila|juliana/.test(lower) && /10:00|14:00|15:00|16:00/.test(lower)) {
+        const prof = /juliana/.test(lower) ? 'Juliana Martins' : 'Camila Andrade';
+        const time = lower.match(/\b(10:00|14:00|15:00|16:00)\b/)?.[1] || '10:00';
+        state.appointments.unshift({ id: `a-${Date.now()}`, date: '24/11/2026', time, client: 'Lead Demo', proc: 'Extensão de Cílios Volume Brasileiro', prof, price: 190, status: 'Confirmado' });
+        renderAgenda();
+        return `Agendamento confirmado na Agenda! Extensão de Cílios com ${prof} em 24/11 às ${time}.${ruleNote}${photoNote}`;
+      }
+      return `Perfeito! Como temos equipe ativa, me diga primeiro com qual profissional prefere atendimento (Camila Andrade ou Juliana Martins) e qual procedimento deseja.${photoNote}`;
+    }
+
+    function sendUserMessage(text) {
+      if (!text.trim()) return;
+      const now = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      state.messages.push({ role: 'client', text: text.trim(), time: now });
+      if (!state.paused) {
+        const reply = simulateAiReply(text);
+        state.messages.push({ role: 'assistant', text: reply, time: now });
+      }
+      renderChat();
+      renderCaixa();
+    }
+
+    document.getElementById('chat-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const inp = document.getElementById('chat-input');
+      sendUserMessage(inp.value);
+      inp.value = '';
+    });
+    document.querySelectorAll('.quick-msg').forEach((b) => b.addEventListener('click', () => sendUserMessage(b.dataset.msg)));
+    document.getElementById('btn-resume-ai').addEventListener('click', () => { state.paused = false; renderChat(); });
+    document.getElementById('btn-reset-chat').addEventListener('click', () => { state.paused = false; state.messages = state.messages.slice(0, 2); renderChat(); });
+    document.getElementById('agenda-prof-filter').addEventListener('change', renderAgenda);
+    document.getElementById('cash-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      state.cash.unshift({
+        date: '22/11/2026',
+        desc: document.getElementById('cash-desc').value,
+        method: document.getElementById('cash-method').value,
+        type: document.getElementById('cash-type').value,
+        amount: Number(document.getElementById('cash-amount').value || 0),
+      });
+      e.target.reset();
+      renderCaixa();
+    });
+    document.getElementById('cfg-lunch-enabled').addEventListener('change', (e) => { state.lunchEnabled = e.target.checked; });
+    document.getElementById('cfg-photo-enabled').addEventListener('change', (e) => { state.askPhoto = e.target.checked; });
+    document.getElementById('holiday-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      state.holidays.push({ id: `h-${Date.now()}`, date: document.getElementById('hol-date').value, label: document.getElementById('hol-label').value || 'Feriado' });
+      e.target.reset();
+      renderConfig();
+    });
+    document.getElementById('rule-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      state.rules.push({ id: `r-${Date.now()}`, text: document.getElementById('rule-input').value });
+      e.target.reset();
+      renderConfig();
+    });
+
+    renderChat();
+    renderAgenda();
+    renderCaixa();
+    renderConfig();
+  </script>
+</body>
+</html>

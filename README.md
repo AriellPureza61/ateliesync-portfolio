@@ -3,7 +3,11 @@
   <h1>AteliêSync — Plataforma SaaS Multi-Tenant de Atendimento WhatsApp com IA, Agenda e Caixa</h1>
   <p><strong>Projeto de Portfólio · Desenvolvido por Ariell Arthur (B Tech Solutions)</strong></p>
   <p>
-    <em>⚠️ Nota: Todas as telas, nomes de estúdios, clientes, valores, profissionais e métricas apresentados neste repositório são <strong>100% fictícios e meramente ilustrativos</strong>.</em>
+    <a href="https://ariellpureza61.github.io/ateliesync-portfolio/"><strong>🌐 Acessar Demo Online Interativa</strong></a> •
+    <a href="./AtelieSync_Portfolio_Ilustrativo.pdf"><strong>📄 PDF One-Pager Ilustrativo</strong></a>
+  </p>
+  <p>
+    <em>⚠️ Nota: Todas as telas, nomes de estúdios, clientes, valores, profissionais e métricas apresentados neste repositório e na demo online são <strong>100% fictícios e meramente ilustrativos</strong>.</em>
   </p>
 </div>
 
